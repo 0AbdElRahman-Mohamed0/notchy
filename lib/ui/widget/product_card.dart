@@ -63,6 +63,28 @@ class _ProductCardState extends State<ProductCard> {
                                     fontWeight: FontWeight.w500,
                                   ),
                         ),
+                        Row(
+                          children: [
+                            Text(
+                              '3.2',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline1
+                                  ?.copyWith(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                            ),
+                            const SizedBox(
+                              width: 2,
+                            ),
+                            const Icon(
+                              Icons.star,
+                              color: Colors.amber,
+                              size: 18,
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ],

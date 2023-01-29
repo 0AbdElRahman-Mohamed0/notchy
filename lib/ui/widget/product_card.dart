@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:notchy/ui/screens/product_details_screen.dart';
 
 class ProductCard extends StatefulWidget {
   const ProductCard({Key? key}) : super(key: key);
@@ -11,7 +13,12 @@ class _ProductCardState extends State<ProductCard> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: () => Navigator.push(
+        context,
+        CupertinoPageRoute(
+          builder: (_) => const ProductDetailsScreen(),
+        ),
+      ),
       child: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
@@ -47,21 +54,24 @@ class _ProductCardState extends State<ProductCard> {
                     Text(
                       'Product name',
                       maxLines: 1,
-                      style: Theme.of(context).textTheme.headline1?.copyWith(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                          ),
+                      style:
+                          Theme.of(context).textTheme.headlineLarge?.copyWith(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
+                              ),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
                           '123 EGP',
-                          style:
-                              Theme.of(context).textTheme.headline1?.copyWith(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                  ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineSmall
+                              ?.copyWith(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
                         ),
                         Row(
                           children: [
@@ -69,7 +79,7 @@ class _ProductCardState extends State<ProductCard> {
                               '3.2',
                               style: Theme.of(context)
                                   .textTheme
-                                  .headline1
+                                  .headlineSmall
                                   ?.copyWith(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,

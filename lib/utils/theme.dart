@@ -35,7 +35,8 @@ class NotchyTheme {
         ),
       ),
       appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFFFFFFFF),
+        backgroundColor: Color(0xFF00A1CE),
+        centerTitle: true,
         iconTheme: IconThemeData(color: Colors.black),
         elevation: 0,
       ),

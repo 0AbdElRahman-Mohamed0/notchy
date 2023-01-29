@@ -8,4 +8,11 @@ class NameModel {
     firstName = json['firstname'];
     lastName = json['lastname'];
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'firstname': firstName,
+      'lastname': lastName,
+    };
+  }
 }

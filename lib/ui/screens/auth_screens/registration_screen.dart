@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:fl_country_code_picker/fl_country_code_picker.dart';
 import 'package:flrx_validator/flrx_validator.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,9 +9,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:notchy/models/address_model.dart';
 import 'package:notchy/models/name_model.dart';
+import 'package:notchy/models/user_model.dart';
+import 'package:notchy/providers/auth_provider.dart';
 import 'package:notchy/ui/screens/nav_screen.dart';
 import 'package:notchy/ui/widget/custom_button.dart';
+import 'package:notchy/ui/widget/error_pop_up.dart';
 import 'package:notchy/ui/widget/input_form_field.dart';
+import 'package:notchy/ui/widget/loading.dart';
+import 'package:notchy/utils/extension_methods/dio_error_extention.dart';
 import 'package:quiver/strings.dart';
 
 class RegistrationScreen extends StatefulWidget {
@@ -24,10 +30,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _autoValidate = false;
   String? _username;
-  NameModel? _name;
+  final NameModel _name = NameModel();
   String? _email;
   String? _pass;
-  AddressModel? _address;
+  final AddressModel _address = AddressModel();
   bool _obscure = true;
   bool _confirmationObscure = true;
   String? _phone;
@@ -38,14 +44,38 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       if (!_autoValidate) setState(() => _autoValidate = true);
       return;
     }
-
     _formKey.currentState?.save();
-    Navigator.pushAndRemoveUntil(
-        context,
-        CupertinoPageRoute(
-          builder: (_) => const NavScreen(),
-        ),
-        (route) => false);
+    try {
+      LoadingScreen.show(context);
+      final user = UserModel(
+        email: _email,
+        name: _name,
+        phone: _phone,
+        address: _address,
+        username: _username,
+      );
+      await context.read<AuthProvider>().register(user, _pass!);
+      if (!mounted) return;
+      Navigator.pushAndRemoveUntil(
+          context,
+          CupertinoPageRoute(
+            builder: (_) => const NavScreen(),
+          ),
+          (route) => false);
+    } on DioError catch (e) {
+      Navigator.pop(context);
+      showDialog(
+        context: context,
+        builder: (_) => ErrorPopUp(message: e.readableError),
+      );
+    } catch (e) {
+      Navigator.pop(context);
+      showDialog(
+        context: context,
+        builder: (_) => const ErrorPopUp(
+            message: 'Something went wrong. Please try again.'),
+      );
+    }
   }
 
   @override
@@ -113,7 +143,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               InputFormField(
                 above: true,
                 labelText: 'First Name',
-                onSaved: (name) => _name?.firstName = name,
+                onSaved: (name) => _name.firstName = name,
                 validator: Validator(
                   rules: [
                     RequiredRule(
@@ -127,7 +157,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               InputFormField(
                 above: true,
                 labelText: 'Last Name',
-                onSaved: (name) => _name?.lastName = name,
+                onSaved: (name) => _name.lastName = name,
                 validator: Validator(
                   rules: [
                     RequiredRule(
@@ -240,7 +270,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               InputFormField(
                 above: true,
                 labelText: 'City',
-                onSaved: (city) => _address?.city = city,
+                onSaved: (city) => _address.city = city,
                 validator: Validator(
                   rules: [
                     RequiredRule(validationMessage: 'Please enter a city.'),
@@ -253,7 +283,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               InputFormField(
                 above: true,
                 labelText: 'Street',
-                onSaved: (street) => _address?.street = street,
+                onSaved: (street) => _address.street = street,
                 validator: Validator(
                   rules: [
                     RequiredRule(
@@ -275,7 +305,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         FilteringTextInputFormatter.allow(RegExp('[0-9]')),
                       ],
                       onSaved: (buildingNumber) {
-                        _address?.buildingNumber =
+                        _address.buildingNumber =
                             int.tryParse(buildingNumber ?? '0');
                       },
                       validator: Validator(
@@ -296,7 +326,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(RegExp('[0-9]')),
                       ],
-                      onSaved: (zipcode) => _address?.zipcode = zipcode,
+                      onSaved: (zipcode) => _address.zipcode = zipcode,
                       validator: Validator(
                         rules: [
                           RequiredRule(validationMessage: 'Required.'),
@@ -305,9 +335,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     ),
                   ),
                 ],
-              ),
-              const SizedBox(
-                height: 20,
               ),
               const SizedBox(
                 height: 20,

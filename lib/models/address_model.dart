@@ -12,4 +12,13 @@ class AddressModel {
     street = json['street'];
     zipcode = json['zipcode'];
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'number': buildingNumber,
+      'city': city,
+      'street': street,
+      'zipcode': zipcode,
+    };
+  }
 }

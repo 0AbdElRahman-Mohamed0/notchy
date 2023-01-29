@@ -270,6 +270,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     child: InputFormField(
                       above: true,
                       labelText: 'Building Number',
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp('[0-9]')),
+                      ],
                       onSaved: (buildingNumber) {
                         _address?.buildingNumber =
                             int.tryParse(buildingNumber ?? '0');
@@ -288,6 +292,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     child: InputFormField(
                       above: true,
                       labelText: 'zipcode',
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp('[0-9]')),
+                      ],
                       onSaved: (zipcode) => _address?.zipcode = zipcode,
                       validator: Validator(
                         rules: [

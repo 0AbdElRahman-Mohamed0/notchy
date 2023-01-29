@@ -20,7 +20,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               .headlineMedium
               ?.copyWith(fontSize: 16, fontWeight: FontWeight.w500),
         ),
-        centerTitle: true,
       ),
       body: Stack(
         alignment: Alignment.bottomCenter,

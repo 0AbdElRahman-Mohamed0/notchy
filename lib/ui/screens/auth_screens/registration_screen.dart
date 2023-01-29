@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:notchy/models/address_model.dart';
 import 'package:notchy/models/name_model.dart';
+import 'package:notchy/ui/screens/nav_screen.dart';
 import 'package:notchy/ui/widget/custom_button.dart';
 import 'package:notchy/ui/widget/input_form_field.dart';
 import 'package:quiver/strings.dart';
@@ -39,6 +40,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     }
 
     _formKey.currentState?.save();
+    Navigator.pushAndRemoveUntil(
+        context,
+        CupertinoPageRoute(
+          builder: (_) => const NavScreen(),
+        ),
+        (route) => false);
   }
 
   @override

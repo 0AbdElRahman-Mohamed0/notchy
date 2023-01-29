@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:notchy/ui/screens/auth_screens/registration_screen.dart';
+import 'package:notchy/ui/screens/nav_screen.dart';
 import 'package:notchy/ui/widget/custom_button.dart';
 import 'package:notchy/ui/widget/input_form_field.dart';
 
@@ -26,6 +27,12 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
     _formKey.currentState?.save();
+    Navigator.pushAndRemoveUntil(
+        context,
+        CupertinoPageRoute(
+          builder: (_) => const NavScreen(),
+        ),
+        (route) => false);
   }
 
   @override

@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:fl_country_code_picker/fl_country_code_picker.dart';
 import 'package:flrx_validator/flrx_validator.dart';
 import 'package:flutter/material.dart';
@@ -5,8 +6,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:notchy/models/address_model.dart';
 import 'package:notchy/models/name_model.dart';
+import 'package:notchy/models/user_model.dart';
+import 'package:notchy/providers/auth_provider.dart';
 import 'package:notchy/ui/widget/custom_button.dart';
+import 'package:notchy/ui/widget/error_pop_up.dart';
 import 'package:notchy/ui/widget/input_form_field.dart';
+import 'package:notchy/ui/widget/loading.dart';
+import 'package:notchy/utils/extension_methods/dio_error_extention.dart';
 import 'package:quiver/strings.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -31,19 +37,65 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (!_autoValidate) setState(() => _autoValidate = true);
       return;
     }
-
     _formKey.currentState?.save();
+    try {
+      LoadingScreen.show(context);
+      final user = UserModel(
+        email: _email,
+        name: _name,
+        phone: _phone,
+        address: _address,
+        username: _username,
+      );
+      await context.read<AuthProvider>().updateProfile(user);
+      if (!mounted) return;
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Your profile updated successfully.',
+            textAlign: TextAlign.center,
+          ),
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 3),
+        ),
+      );
+    } on DioError catch (e) {
+      Navigator.pop(context);
+      showDialog(
+        context: context,
+        builder: (_) => ErrorPopUp(message: e.readableError),
+      );
+    } catch (e) {
+      Navigator.pop(context);
+      showDialog(
+        context: context,
+        builder: (_) => const ErrorPopUp(
+            message: 'Something went wrong. Please try again.'),
+      );
+    }
   }
 
   @override
   void initState() {
     super.initState();
+    _initData();
     _countryCode =
         const CountryCode(code: 'EG', dialCode: '+20', name: 'Egypt');
   }
 
+  _initData() {
+    final user = context.read<AuthProvider>().user;
+    _email = user?.email;
+    _name = user?.name;
+    _phone = user?.phone;
+    _address = user?.address;
+    _username = user?.username;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final user = context.read<AuthProvider>().user;
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
       child: Form(
@@ -56,7 +108,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             InputFormField(
               above: true,
               labelText: 'Username',
-              initialValue: 'Username',
+              initialValue: user?.username,
               onSaved: (name) => _username = name,
               validator: Validator(
                 rules: [
@@ -70,7 +122,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             InputFormField(
               above: true,
               labelText: 'First Name',
-              initialValue: 'First Name',
+              initialValue: user?.name?.firstName,
               onSaved: (name) => _name?.firstName = name,
               validator: Validator(
                 rules: [
@@ -85,7 +137,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             InputFormField(
               above: true,
               labelText: 'Last Name',
-              initialValue: 'Last Name',
+              initialValue: user?.name?.lastName,
               onSaved: (name) => _name?.lastName = name,
               validator: Validator(
                 rules: [
@@ -157,7 +209,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 Expanded(
                   child: InputFormField(
-                    initialValue: '012913028324',
+                    initialValue: user?.phone,
                     keyboardType: TextInputType.phone,
                     inputFormatters: [
                       FilteringTextInputFormatter.allow(RegExp('[0-9]')),
@@ -183,7 +235,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             InputFormField(
               above: true,
               labelText: 'Email',
-              initialValue: 'dsad@jda.sad',
+              initialValue: user?.email,
               keyboardType: TextInputType.emailAddress,
               onSaved: (email) => _email = email,
               validator: Validator(
@@ -199,7 +251,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             InputFormField(
               above: true,
               labelText: 'City',
-              initialValue: 'City',
+              initialValue: user?.address?.city,
               onSaved: (city) => _address?.city = city,
               validator: Validator(
                 rules: [
@@ -213,7 +265,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             InputFormField(
               above: true,
               labelText: 'Street',
-              initialValue: 'Street',
+              initialValue: user?.address?.street,
               onSaved: (street) => _address?.street = street,
               validator: Validator(
                 rules: [
@@ -231,7 +283,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: InputFormField(
                     above: true,
                     labelText: 'Building Number',
-                    initialValue: '3',
+                    initialValue: user?.address?.buildingNumber.toString(),
                     keyboardType: TextInputType.number,
                     inputFormatters: [
                       FilteringTextInputFormatter.allow(RegExp('[0-9]')),
@@ -254,7 +306,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: InputFormField(
                     above: true,
                     labelText: 'zipcode',
-                    initialValue: '234234',
+                    initialValue: user?.address?.zipcode,
                     keyboardType: TextInputType.number,
                     inputFormatters: [
                       FilteringTextInputFormatter.allow(RegExp('[0-9]')),

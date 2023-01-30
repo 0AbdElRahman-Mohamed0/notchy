@@ -17,4 +17,9 @@ class AuthProvider extends ChangeNotifier {
     user = await _api.login(username, password);
     notifyListeners();
   }
+
+  Future<void> updateProfile(UserModel user) async {
+    user = await _api.updateProfile(user);
+    notifyListeners();
+  }
 }

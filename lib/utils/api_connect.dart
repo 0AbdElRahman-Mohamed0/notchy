@@ -32,14 +32,14 @@ class ApiProvider {
   };
 
   ////////////////////////////// END POINTS //////////////////////////////////////
-  static const String _registerEndPoint = "users";
+  static const String _usersEndPoint = "users";
   static const String _loginEndPoint = "auth/login";
   static const String _productsEndPoint = "products";
   ////////////////////////////////////////////////////////////////////////
 
   Future<UserModel> register(UserModel user, String password) async {
     final response = await _dio.post(
-      '${Connection.baseURL}$_registerEndPoint', //TODO: user like register
+      '${Connection.baseURL}$_usersEndPoint', //TODO: user like register
       data: {
         ...user.toMap(),
         'password': password,
@@ -89,6 +89,25 @@ class ApiProvider {
         ),
       );
       return user;
+    } else {
+      throw response.data;
+    }
+  }
+
+  Future<UserModel> updateProfile(UserModel user) async {
+    final response = await _dio.put(
+      '${Connection.baseURL}$_usersEndPoint/7',
+      data: user.toMap(),
+      options: Options(
+        headers: {
+          'Authorization':
+              'Bearer ${await UserModel.getToken}', // act as there is token
+          ..._apiHeaders,
+        },
+      ),
+    );
+    if (_validResponse(response.statusCode!)) {
+      return UserModel.fromMap(response.data);
     } else {
       throw response.data;
     }

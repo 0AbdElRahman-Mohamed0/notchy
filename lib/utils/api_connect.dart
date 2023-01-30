@@ -35,6 +35,8 @@ class ApiProvider {
   static const String _usersEndPoint = "users";
   static const String _loginEndPoint = "auth/login";
   static const String _productsEndPoint = "products";
+  static const String _categoriesEndPoint = "products/categories";
+  static const String _categoryEndPoint = "products/category";
   ////////////////////////////////////////////////////////////////////////
 
   Future<UserModel> register(UserModel user, String password) async {
@@ -116,6 +118,42 @@ class ApiProvider {
   Future<List<ProductModel>> getProducts() async {
     final response = await _dio.get(
       '${Connection.baseURL}$_productsEndPoint',
+      options: Options(
+        headers: _apiHeaders,
+      ),
+    );
+    if (_validResponse(response.statusCode!)) {
+      final List<ProductModel> products = <ProductModel>[];
+      for (var element in (response.data)) {
+        products.add(ProductModel.fromMap(element));
+      }
+      return products;
+    } else {
+      throw response.data;
+    }
+  }
+
+  Future<List<String>> getCategories() async {
+    final response = await _dio.get(
+      '${Connection.baseURL}$_categoriesEndPoint',
+      options: Options(
+        headers: _apiHeaders,
+      ),
+    );
+    if (_validResponse(response.statusCode!)) {
+      final List<String> categories = <String>[];
+      for (var element in (response.data)) {
+        categories.add(element);
+      }
+      return categories;
+    } else {
+      throw response.data;
+    }
+  }
+
+  Future<List<ProductModel>> getCategoryProducts(String category) async {
+    final response = await _dio.get(
+      '${Connection.baseURL}$_categoryEndPoint/$category',
       options: Options(
         headers: _apiHeaders,
       ),

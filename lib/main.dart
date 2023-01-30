@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:notchy/providers/auth_provider.dart';
+import 'package:notchy/providers/categories_provider.dart';
 import 'package:notchy/providers/navigation_index_provider.dart';
 import 'package:notchy/providers/products_provider.dart';
 import 'package:notchy/ui/screens/auth_screens/login_screen.dart';
@@ -36,6 +37,9 @@ class _MyAppState extends State<MyApp> {
         ),
         ChangeNotifierProvider<ProductsProvider>(
           create: (_) => ProductsProvider(),
+        ),
+        ChangeNotifierProvider<CategoriesProvider>(
+          create: (_) => CategoriesProvider(),
         ),
       ],
       child: MaterialApp(

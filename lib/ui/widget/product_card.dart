@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:notchy/providers/auth_provider.dart';
 import 'package:notchy/providers/product_provider.dart';
 import 'package:notchy/ui/screens/product_details_screen.dart';
 import 'package:notchy/ui/widget/loading.dart';
@@ -22,7 +21,10 @@ class _ProductCardState extends State<ProductCard> {
       onTap: () => Navigator.push(
         context,
         CupertinoPageRoute(
-          builder: (_) => const ProductDetailsScreen(),
+          builder: (_) => ChangeNotifierProvider<ProductProvider>.value(
+            value: productProvider,
+            child: const ProductDetailsScreen(),
+          ),
         ),
       ),
       child: Container(

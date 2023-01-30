@@ -1,5 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:notchy/providers/product_provider.dart';
 import 'package:notchy/ui/widget/custom_button.dart';
+import 'package:notchy/ui/widget/loading.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   const ProductDetailsScreen({Key? key}) : super(key: key);
@@ -11,10 +14,11 @@ class ProductDetailsScreen extends StatefulWidget {
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   @override
   Widget build(BuildContext context) {
+    final product = context.watch<ProductProvider>().product;
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Product Name',
+          product.title ?? '',
           style: Theme.of(context)
               .textTheme
               .headlineMedium
@@ -33,33 +37,44 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
+                    CachedNetworkImage(
+                      imageUrl: product.image ?? '',
                       height: 140,
                       width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(10),
+                      imageBuilder: (context, imageProvider) => Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          image: DecorationImage(
+                            image: imageProvider,
+                          ),
+                        ),
                       ),
+                      placeholder: (context, url) => const LoadingWidget(),
+                      errorWidget: (context, url, error) =>
+                          const Icon(Icons.error_outline),
                     ),
                     const SizedBox(
                       height: 16,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'product name',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineLarge
-                              ?.copyWith(
-                                  fontSize: 18, fontWeight: FontWeight.w500),
+                        Expanded(
+                          child: Text(
+                            product.title ?? '',
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineLarge
+                                ?.copyWith(
+                                    fontSize: 18, fontWeight: FontWeight.w500),
+                          ),
                         ),
                         Row(
                           textBaseline: TextBaseline.ideographic,
                           children: [
                             Text(
-                              '3.5',
+                              '${product.rating?.rate ?? ''}',
                               style: Theme.of(context)
                                   .textTheme
                                   .headlineLarge
@@ -86,7 +101,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       TextSpan(
                         children: [
                           TextSpan(
-                            text: '123 ',
+                            text: '${product.price ?? ''} ',
                             style: Theme.of(context)
                                 .textTheme
                                 .headlineLarge
@@ -109,10 +124,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       ),
                     ),
                     const SizedBox(
-                      height: 4,
+                      height: 10,
                     ),
                     Text(
-                      'Description',
+                      product.description ?? '',
                       style: Theme.of(context)
                           .textTheme
                           .headlineSmall

@@ -1,11 +1,16 @@
+import 'package:dio/dio.dart';
 import 'package:flrx_validator/flrx_validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:notchy/providers/auth_provider.dart';
 import 'package:notchy/ui/screens/auth_screens/registration_screen.dart';
 import 'package:notchy/ui/screens/nav_screen.dart';
 import 'package:notchy/ui/widget/custom_button.dart';
+import 'package:notchy/ui/widget/error_pop_up.dart';
 import 'package:notchy/ui/widget/input_form_field.dart';
+import 'package:notchy/ui/widget/loading.dart';
+import 'package:notchy/utils/extension_methods/dio_error_extention.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -17,7 +22,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _autoValidate = false;
-  String? _email;
+  String? _username;
   bool _obscure = true;
   String? _pass;
 
@@ -27,12 +32,30 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
     _formKey.currentState?.save();
-    Navigator.pushAndRemoveUntil(
-        context,
-        CupertinoPageRoute(
-          builder: (_) => const NavScreen(),
-        ),
-        (route) => false);
+    try {
+      LoadingScreen.show(context);
+      await context.read<AuthProvider>().login(_username!, _pass!);
+      if (!mounted) return;
+      Navigator.pushAndRemoveUntil(
+          context,
+          CupertinoPageRoute(
+            builder: (_) => const NavScreen(),
+          ),
+          (route) => false);
+    } on DioError catch (e) {
+      Navigator.pop(context);
+      showDialog(
+        context: context,
+        builder: (_) => ErrorPopUp(message: e.readableError),
+      );
+    } catch (e) {
+      Navigator.pop(context);
+      showDialog(
+        context: context,
+        builder: (_) => const ErrorPopUp(
+            message: 'Something went wrong. Please try again.'),
+      );
+    }
   }
 
   @override
@@ -79,13 +102,11 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               InputFormField(
                 above: true,
-                labelText: 'Email',
-                keyboardType: TextInputType.emailAddress,
-                onSaved: (email) => _email = email,
+                labelText: 'Username',
+                onSaved: (name) => _username = name,
                 validator: Validator(
-                  rules: <Rule>[
-                    RequiredRule(validationMessage: 'Please enter an email.'),
-                    EmailRule(validationMessage: 'Please enter a valid email.'),
+                  rules: [
+                    RequiredRule(validationMessage: 'Please enter a username.'),
                   ],
                 ),
               ),

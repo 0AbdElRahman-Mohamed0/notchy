@@ -12,4 +12,9 @@ class AuthProvider extends ChangeNotifier {
     user = await _api.register(userModel, password);
     notifyListeners();
   }
+
+  Future<void> login(String username, String password) async {
+    user = await _api.login(username, password);
+    notifyListeners();
+  }
 }

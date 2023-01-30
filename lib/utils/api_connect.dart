@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
+import 'package:notchy/models/address_model.dart';
+import 'package:notchy/models/name_model.dart';
 import 'package:notchy/models/user_model.dart';
 import 'package:notchy/utils/vars.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
@@ -30,11 +32,12 @@ class ApiProvider {
 
   ////////////////////////////// END POINTS //////////////////////////////////////
   static const String _registerEndPoint = "users";
+  static const String _loginEndPoint = "auth/login";
   ////////////////////////////////////////////////////////////////////////
 
   Future<UserModel> register(UserModel user, String password) async {
     final response = await _dio.post(
-      '${Connection.baseURL}$_registerEndPoint',
+      '${Connection.baseURL}$_registerEndPoint', //TODO: user like register
       data: {
         ...user.toMap(),
         'password': password,
@@ -45,6 +48,44 @@ class ApiProvider {
     );
     if (_validResponse(response.statusCode!)) {
       user.id = response.data['id'];
+      UserModel.saveToken('eyJhbGciOiJIUzI1NiIsInR'); // static token
+      return user;
+    } else {
+      throw response.data;
+    }
+  }
+
+  Future<UserModel> login(String username, String password) async {
+    final response = await _dio.post(
+      '${Connection.baseURL}$_loginEndPoint',
+      data: {
+        'username': username,
+        'password': password,
+      },
+      options: Options(
+        headers: _apiHeaders,
+      ),
+    );
+    if (_validResponse(response.statusCode!)) {
+      UserModel.saveToken(response.data['token']);
+
+      final user = UserModel(
+        username: 'Username',
+        phone: '01234567890',
+        email: 'test@email.com',
+        id: 1,
+        phoneCode: '+20',
+        address: AddressModel(
+          buildingNumber: 12,
+          city: 'Alex',
+          street: 'Street',
+          zipcode: '213124',
+        ),
+        name: NameModel(
+          firstName: 'AbdElRahman',
+          lastName: 'Mohamed',
+        ),
+      );
       return user;
     } else {
       throw response.data;

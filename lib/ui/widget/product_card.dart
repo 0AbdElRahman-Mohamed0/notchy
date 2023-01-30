@@ -1,6 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:notchy/providers/auth_provider.dart';
+import 'package:notchy/providers/product_provider.dart';
 import 'package:notchy/ui/screens/product_details_screen.dart';
+import 'package:notchy/ui/widget/loading.dart';
 
 class ProductCard extends StatefulWidget {
   const ProductCard({Key? key}) : super(key: key);
@@ -12,6 +16,8 @@ class ProductCard extends StatefulWidget {
 class _ProductCardState extends State<ProductCard> {
   @override
   Widget build(BuildContext context) {
+    final productProvider = context.watch<ProductProvider>();
+    final product = productProvider.product;
     return InkWell(
       onTap: () => Navigator.push(
         context,
@@ -33,16 +39,27 @@ class _ProductCardState extends State<ProductCard> {
         ),
         child: Column(
           children: [
-            Container(
+            const SizedBox(
+              height: 10,
+            ),
+            CachedNetworkImage(
+              imageUrl: product.image ?? '',
               height: 80,
               width: double.infinity,
-              decoration: const BoxDecoration(
-                color: Colors.blue,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(5),
-                  topRight: Radius.circular(5),
+              imageBuilder: (context, imageProvider) => Container(
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(5),
+                    topRight: Radius.circular(5),
+                  ),
+                  image: DecorationImage(
+                    image: imageProvider,
+                  ),
                 ),
               ),
+              placeholder: (context, url) => const LoadingWidget(),
+              errorWidget: (context, url, error) =>
+                  const Icon(Icons.error_outline),
             ),
             Expanded(
               child: Padding(
@@ -52,7 +69,7 @@ class _ProductCardState extends State<ProductCard> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Product name',
+                      product.title ?? '',
                       maxLines: 1,
                       style:
                           Theme.of(context).textTheme.headlineLarge?.copyWith(
@@ -64,7 +81,7 @@ class _ProductCardState extends State<ProductCard> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          '123 EGP',
+                          '${product.price ?? ''} EGP',
                           style: Theme.of(context)
                               .textTheme
                               .headlineSmall
@@ -76,7 +93,7 @@ class _ProductCardState extends State<ProductCard> {
                         Row(
                           children: [
                             Text(
-                              '3.2',
+                              '${product.rating?.rate ?? ''}',
                               style: Theme.of(context)
                                   .textTheme
                                   .headlineSmall

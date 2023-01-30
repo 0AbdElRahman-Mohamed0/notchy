@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:notchy/models/address_model.dart';
 import 'package:notchy/models/name_model.dart';
+import 'package:notchy/models/product_model.dart';
 import 'package:notchy/models/user_model.dart';
 import 'package:notchy/utils/vars.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
@@ -33,6 +34,7 @@ class ApiProvider {
   ////////////////////////////// END POINTS //////////////////////////////////////
   static const String _registerEndPoint = "users";
   static const String _loginEndPoint = "auth/login";
+  static const String _productsEndPoint = "products";
   ////////////////////////////////////////////////////////////////////////
 
   Future<UserModel> register(UserModel user, String password) async {
@@ -87,6 +89,24 @@ class ApiProvider {
         ),
       );
       return user;
+    } else {
+      throw response.data;
+    }
+  }
+
+  Future<List<ProductModel>> getProducts() async {
+    final response = await _dio.get(
+      '${Connection.baseURL}$_productsEndPoint',
+      options: Options(
+        headers: _apiHeaders,
+      ),
+    );
+    if (_validResponse(response.statusCode!)) {
+      final List<ProductModel> products = <ProductModel>[];
+      for (var element in (response.data)) {
+        products.add(ProductModel.fromMap(element));
+      }
+      return products;
     } else {
       throw response.data;
     }

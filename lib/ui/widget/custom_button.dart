@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 class CustomButton extends StatelessWidget {
-  const CustomButton({Key? key, required this.title, this.onTap})
+  const CustomButton(
+      {Key? key, required this.title, this.onTap, this.logout = false})
       : super(key: key);
 
   final String title;
   final Function()? onTap;
+  final bool logout;
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +18,9 @@ class CustomButton extends StatelessWidget {
         alignment: Alignment.center,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(14),
-          color: Theme.of(context).primaryColor,
+          color: logout
+              ? Theme.of(context).errorColor
+              : Theme.of(context).primaryColor,
         ),
         child: Text(
           title,

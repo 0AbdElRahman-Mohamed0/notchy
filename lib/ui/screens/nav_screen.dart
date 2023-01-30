@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:notchy/providers/navigation_index_provider.dart';
+import 'package:notchy/ui/screens/nav_screens/account_screen.dart';
 import 'package:notchy/ui/screens/nav_screens/cart_screen.dart';
 import 'package:notchy/ui/screens/nav_screens/home_screen.dart';
-import 'package:notchy/ui/screens/nav_screens/profile_screen.dart';
 
 class NavScreen extends StatefulWidget {
   const NavScreen({Key? key}) : super(key: key);
@@ -20,7 +20,7 @@ class _NavScreenState extends State<NavScreen> {
     _widgetOptions = <Widget>[
       const HomeScreen(),
       const CartScreen(),
-      const ProfileScreen(),
+      const AccountScreen(),
     ];
   }
 
@@ -35,7 +35,7 @@ class _NavScreenState extends State<NavScreen> {
               ? 'Home'
               : index == 1
                   ? 'Cart'
-                  : 'Profile',
+                  : 'Account',
           style: Theme.of(context)
               .textTheme
               .headlineMedium

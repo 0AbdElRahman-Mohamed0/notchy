@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:notchy/models/user_model.dart';
 import 'package:notchy/utils/api_connect.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 export 'package:provider/provider.dart';
 
@@ -20,6 +21,13 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> updateProfile(UserModel user) async {
     user = await _api.updateProfile(user);
+    notifyListeners();
+  }
+
+  logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.clear();
+    user = null;
     notifyListeners();
   }
 }

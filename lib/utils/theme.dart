@@ -33,6 +33,9 @@ class NotchyTheme {
         bodyLarge: TextStyle(
           color: Color(0xFF00A1CE),
         ),
+        titleMedium: TextStyle(
+          color: Colors.red,
+        ),
       ),
       appBarTheme: const AppBarTheme(
         backgroundColor: Color(0xFF00A1CE),

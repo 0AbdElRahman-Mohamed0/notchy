@@ -21,6 +21,8 @@ class CategoryProductsScreen extends StatefulWidget {
 }
 
 class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
+  Map<String, dynamic>? _filters;
+
   @override
   void initState() {
     super.initState();
@@ -106,6 +108,7 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                   ),
                 )
               : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(
                       height: 10,
@@ -131,16 +134,15 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                         ),
                         InkWell(
                           onTap: () async {
-                            final Map<String, dynamic>? filters =
-                                await Navigator.push(
+                            _filters = await Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (_) => const FilterScreen(),
                               ),
                             );
 
-                            if (filters == null) return;
-                            _filterProducts(filters);
+                            if (_filters == null) return;
+                            _filterProducts(_filters!);
                           },
                           child: Container(
                             padding: const EdgeInsets.all(8),
@@ -157,6 +159,22 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                         ),
                       ],
                     ),
+                    if (_filters != null)
+                      TextButton(
+                        onPressed: () {
+                          _filters = null;
+                          setState(() {});
+                          _getData();
+                        },
+                        child: Text(
+                          'Remove filters',
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(
+                                  fontSize: 14, fontWeight: FontWeight.w700),
+                        ),
+                      ),
                     Expanded(
                       child: GridView(
                         gridDelegate:

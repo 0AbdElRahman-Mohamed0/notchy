@@ -21,6 +21,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  Map<String, dynamic>? _filters;
+
   _getData() async {
     try {
       await Future.wait({
@@ -86,6 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return products == null || categories == null
         ? const LoadingWidget()
         : Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(
                 height: 10,
@@ -111,16 +114,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   InkWell(
                     onTap: () async {
-                      final Map<String, dynamic>? filters =
-                          await Navigator.push(
+                      _filters = await Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (_) => const FilterScreen(),
                         ),
                       );
 
-                      if (filters == null) return;
-                      _filterProducts(filters);
+                      if (_filters == null) return;
+                      _filterProducts(_filters!);
                     },
                     child: Container(
                       padding: const EdgeInsets.all(8),
@@ -137,6 +139,21 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ],
               ),
+              if (_filters != null)
+                TextButton(
+                  onPressed: () {
+                    _filters = null;
+                    setState(() {});
+                    _getData();
+                  },
+                  child: Text(
+                    'Remove filters',
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium
+                        ?.copyWith(fontSize: 14, fontWeight: FontWeight.w700),
+                  ),
+                ),
               Expanded(
                 child: ListView(
                   children: [

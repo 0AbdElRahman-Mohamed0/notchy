@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:notchy/providers/auth_provider.dart';
+import 'package:notchy/providers/cart_provider.dart';
 import 'package:notchy/providers/categories_provider.dart';
 import 'package:notchy/providers/navigation_index_provider.dart';
 import 'package:notchy/providers/products_provider.dart';
@@ -9,6 +11,7 @@ import 'package:notchy/utils/theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  initializeDateFormatting();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -40,6 +43,9 @@ class _MyAppState extends State<MyApp> {
         ),
         ChangeNotifierProvider<CategoriesProvider>(
           create: (_) => CategoriesProvider(),
+        ),
+        ChangeNotifierProvider<CartProvider>(
+          create: (_) => CartProvider(),
         ),
       ],
       child: MaterialApp(

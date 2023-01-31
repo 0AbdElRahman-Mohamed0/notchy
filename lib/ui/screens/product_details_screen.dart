@@ -1,8 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:notchy/models/cart_model.dart';
+import 'package:notchy/providers/auth_provider.dart';
+import 'package:notchy/providers/cart_provider.dart';
 import 'package:notchy/providers/product_provider.dart';
 import 'package:notchy/ui/widget/custom_button.dart';
+import 'package:notchy/ui/widget/error_pop_up.dart';
 import 'package:notchy/ui/widget/loading.dart';
+import 'package:notchy/utils/extension_methods/dio_error_extention.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   const ProductDetailsScreen({Key? key}) : super(key: key);
@@ -12,6 +19,45 @@ class ProductDetailsScreen extends StatefulWidget {
 }
 
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
+  _addToCart() async {
+    try {
+      LoadingScreen.show(context);
+      final product = context.read<ProductProvider>().product;
+      final user = context.read<AuthProvider>().user;
+      final cart = CartModel(
+        date: DateFormat('yyyy-MM-dd', 'en').format(DateTime.now()),
+        products: [product],
+        userId: user?.id,
+      );
+      await context.read<CartProvider>().addCart(cart);
+      if (!mounted) return;
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Your product added to cart successfully.',
+            textAlign: TextAlign.center,
+          ),
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 3),
+        ),
+      );
+    } on DioError catch (e) {
+      Navigator.pop(context);
+      showDialog(
+        context: context,
+        builder: (_) => ErrorPopUp(message: e.readableError),
+      );
+    } catch (e) {
+      Navigator.pop(context);
+      showDialog(
+        context: context,
+        builder: (_) => const ErrorPopUp(
+            message: 'Something went wrong. Please try again.'),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final product = context.watch<ProductProvider>().product;
@@ -156,7 +202,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             child: SizedBox(
               height: 48,
               child: CustomButton(
-                onTap: () {},
+                onTap: _addToCart,
                 title: 'Add To Cart',
               ),
             ),

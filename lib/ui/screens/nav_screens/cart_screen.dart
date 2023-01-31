@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:notchy/providers/cart_provider.dart';
+import 'package:notchy/providers/product_provider.dart';
 import 'package:notchy/ui/widget/cart_card.dart';
 
 class CartScreen extends StatelessWidget {
@@ -6,6 +8,7 @@ class CartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cart = context.watch<CartProvider>().cart;
     return LayoutBuilder(
       builder: (context, constraints) => SingleChildScrollView(
         child: ConstrainedBox(
@@ -19,18 +22,32 @@ class CartScreen extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const CartCard(),
-                    const SizedBox(
-                      height: 12,
-                    ),
-                    const CartCard(),
-                    const SizedBox(
-                      height: 12,
-                    ),
-                    const CartCard(),
-                    const SizedBox(
-                      height: 12,
-                    ),
+                    ...cart?.products?.map(
+                          (product) => ChangeNotifierProvider<ProductProvider>(
+                            create: (_) => ProductProvider(product),
+                            child: Column(
+                              children: const [
+                                CartCard(),
+                                SizedBox(
+                                  height: 12,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ) ??
+                        [],
+                    // const CartCard(),
+                    // const SizedBox(
+                    //   height: 12,
+                    // ),
+                    // const CartCard(),
+                    // const SizedBox(
+                    //   height: 12,
+                    // ),
+                    // const CartCard(),
+                    // const SizedBox(
+                    //   height: 12,
+                    // ),
                     Divider(
                       height: 1,
                       color: Theme.of(context).cardColor,

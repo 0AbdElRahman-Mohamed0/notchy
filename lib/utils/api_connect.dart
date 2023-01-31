@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:notchy/models/address_model.dart';
+import 'package:notchy/models/cart_model.dart';
 import 'package:notchy/models/name_model.dart';
 import 'package:notchy/models/product_model.dart';
 import 'package:notchy/models/user_model.dart';
@@ -37,6 +38,7 @@ class ApiProvider {
   static const String _productsEndPoint = "products";
   static const String _categoriesEndPoint = "products/categories";
   static const String _categoryEndPoint = "products/category";
+  static const String _cartEndPoint = "carts";
   ////////////////////////////////////////////////////////////////////////
 
   Future<UserModel> register(UserModel user, String password) async {
@@ -211,6 +213,50 @@ class ApiProvider {
       ),
     );
     if (_validResponse(response.statusCode!)) {
+    } else {
+      throw response.data;
+    }
+  }
+
+  Future<CartModel> addNewCart(CartModel cart) async {
+    final response = await _dio.post(
+      '${Connection.baseURL}$_cartEndPoint',
+      data: cart.toMap(),
+      options: Options(
+        headers: _apiHeaders,
+      ),
+    );
+    if (_validResponse(response.statusCode!)) {
+      return CartModel.fromMap(response.data);
+    } else {
+      throw response.data;
+    }
+  }
+
+  Future<CartModel> updateCart(CartModel cart, {int? cartId}) async {
+    final response = await _dio.put(
+      '${Connection.baseURL}$_cartEndPoint/$cartId',
+      data: cart.toMap(),
+      options: Options(
+        headers: _apiHeaders,
+      ),
+    );
+    if (_validResponse(response.statusCode!)) {
+      return CartModel.fromMap(response.data);
+    } else {
+      throw response.data;
+    }
+  }
+
+  Future<ProductModel> getSingleProduct(int productId) async {
+    final response = await _dio.get(
+      '${Connection.baseURL}$_productsEndPoint/$productId',
+      options: Options(
+        headers: _apiHeaders,
+      ),
+    );
+    if (_validResponse(response.statusCode!)) {
+      return ProductModel.fromMap(response.data);
     } else {
       throw response.data;
     }

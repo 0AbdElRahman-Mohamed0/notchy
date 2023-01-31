@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:notchy/providers/categories_provider.dart';
 import 'package:notchy/providers/product_provider.dart';
 import 'package:notchy/providers/products_provider.dart';
 import 'package:notchy/ui/screens/add_product_screen.dart';

@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:notchy/providers/cart_provider.dart';
 import 'package:notchy/providers/product_provider.dart';
 import 'package:notchy/ui/widget/error_pop_up.dart';
 import 'package:notchy/ui/widget/loading.dart';
@@ -27,6 +28,24 @@ class _CartCardState extends State<CartCard> {
   _getData() async {
     try {
       await context.read<ProductProvider>().getSingleProduct();
+    } on DioError catch (e) {
+      showDialog(
+        context: context,
+        builder: (_) => ErrorPopUp(message: e.readableError),
+      );
+    } catch (e) {
+      showDialog(
+        context: context,
+        builder: (_) => const ErrorPopUp(
+            message: 'Something went wrong. Please try again.'),
+      );
+    }
+  }
+
+  _deleteProduct() async {
+    try {
+      final product = context.read<ProductProvider>().product;
+      await context.read<CartProvider>().deleteProduct(product.id ?? 0);
     } on DioError catch (e) {
       showDialog(
         context: context,
@@ -142,7 +161,7 @@ class _CartCardState extends State<CartCard> {
                             width: 22,
                           ),
                           InkWell(
-                            onTap: () {},
+                            onTap: _deleteProduct,
                             child: const Icon(
                               Icons.delete_forever_outlined,
                               color: Colors.red,

@@ -17,4 +17,14 @@ class CartProvider extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  Future<void> deleteProduct(int productId) async {
+    cart?.products?.removeWhere((product) => product.id == productId);
+    final tmp = cart;
+    cart = null;
+    notifyListeners();
+    await Future.delayed(const Duration(microseconds: 500));
+    cart = tmp;
+    notifyListeners();
+  }
 }

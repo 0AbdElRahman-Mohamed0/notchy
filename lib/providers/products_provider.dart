@@ -31,4 +31,11 @@ class ProductsProvider extends ChangeNotifier {
     myProducts.add(product);
     notifyListeners();
   }
+
+  Future<void> updateProduct(ProductModel productModel) async {
+    final product = await _api.updateProduct(productModel);
+    myProducts.removeWhere((p) => p.id == productModel.id);
+    myProducts.add(product);
+    notifyListeners();
+  }
 }

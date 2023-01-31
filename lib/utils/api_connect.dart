@@ -188,6 +188,21 @@ class ApiProvider {
     }
   }
 
+  Future<ProductModel> updateProduct(ProductModel product) async {
+    final response = await _dio.put(
+      '${Connection.baseURL}$_productsEndPoint/${product.id}',
+      data: product.toMap(),
+      options: Options(
+        headers: _apiHeaders,
+      ),
+    );
+    if (_validResponse(response.statusCode!)) {
+      return ProductModel.fromMap(response.data);
+    } else {
+      throw response.data;
+    }
+  }
+
 ////////////////////////////////// UTILS ///////////////////////////////////////
   // Validating Request.
   bool _validResponse(int statusCode) => statusCode >= 200 && statusCode < 300;

@@ -15,7 +15,9 @@ class ProductModel {
   ProductModel(
       {this.fileImage,
       this.title,
+      this.id,
       this.category,
+      this.image,
       this.description,
       this.price});
 
@@ -33,7 +35,7 @@ class ProductModel {
 
   Map<String, dynamic> toMap() {
     return {
-      'image': fileImage != null ? 'https://i.pravatar.cc' : null,
+      'image': fileImage != null ? 'https://i.pravatar.cc' : image,
       'title': title,
       'category': category,
       'description': description,

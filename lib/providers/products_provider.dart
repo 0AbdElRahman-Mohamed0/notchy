@@ -9,17 +9,19 @@ class ProductsProvider extends ChangeNotifier {
   List<ProductModel>? products;
   List<ProductModel>? categoryProducts;
 
-  Future<void> getProducts() async {
+  Future<void> getProducts({Map<String, dynamic>? filters}) async {
     products = null;
     notifyListeners();
-    products = await _api.getProducts();
+    products = await _api.getProducts(filters: filters);
     notifyListeners();
   }
 
-  Future<void> getCategoryProducts(String category) async {
+  Future<void> getCategoryProducts(String category,
+      {Map<String, dynamic>? filters}) async {
     categoryProducts = null;
     notifyListeners();
-    categoryProducts = await _api.getCategoryProducts(category);
+    categoryProducts =
+        await _api.getCategoryProducts(category, filters: filters);
     notifyListeners();
   }
 }

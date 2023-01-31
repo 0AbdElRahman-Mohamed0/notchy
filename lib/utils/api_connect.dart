@@ -115,9 +115,11 @@ class ApiProvider {
     }
   }
 
-  Future<List<ProductModel>> getProducts() async {
+  Future<List<ProductModel>> getProducts(
+      {Map<String, dynamic>? filters}) async {
     final response = await _dio.get(
       '${Connection.baseURL}$_productsEndPoint',
+      queryParameters: filters,
       options: Options(
         headers: _apiHeaders,
       ),
@@ -151,9 +153,11 @@ class ApiProvider {
     }
   }
 
-  Future<List<ProductModel>> getCategoryProducts(String category) async {
+  Future<List<ProductModel>> getCategoryProducts(String category,
+      {Map<String, dynamic>? filters}) async {
     final response = await _dio.get(
       '${Connection.baseURL}$_categoryEndPoint/$category',
+      queryParameters: filters,
       options: Options(
         headers: _apiHeaders,
       ),

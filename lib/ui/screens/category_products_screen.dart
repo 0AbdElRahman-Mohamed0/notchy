@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:notchy/providers/product_provider.dart';
 import 'package:notchy/providers/products_provider.dart';
+import 'package:notchy/ui/screens/filter_screen.dart';
 import 'package:notchy/ui/screens/search_delegate_screen.dart';
 import 'package:notchy/ui/widget/error_pop_up.dart';
 import 'package:notchy/ui/widget/input_form_field.dart';
@@ -60,6 +61,25 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
     );
   }
 
+  _filterProducts(Map<String, dynamic> filters) async {
+    try {
+      await context
+          .read<ProductsProvider>()
+          .getCategoryProducts(widget.category, filters: filters);
+    } on DioError catch (e) {
+      showDialog(
+        context: context,
+        builder: (_) => ErrorPopUp(message: e.readableError),
+      );
+    } catch (e) {
+      showDialog(
+        context: context,
+        builder: (_) => const ErrorPopUp(
+            message: 'Something went wrong. Please try again.'),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final products = context.watch<ProductsProvider>().categoryProducts;
@@ -90,20 +110,52 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                     const SizedBox(
                       height: 10,
                     ),
-                    Container(
-                      height: 56,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: InkWell(
-                        onTap: _showSearch,
-                        child: const InputFormField(
-                          enabled: false,
-                          prefixIcon: Padding(
-                            padding: EdgeInsets.only(top: 11, bottom: 11),
-                            child: Icon(Icons.search),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            height: 56,
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: InkWell(
+                              onTap: _showSearch,
+                              child: const InputFormField(
+                                enabled: false,
+                                prefixIcon: Padding(
+                                  padding: EdgeInsets.only(top: 11, bottom: 11),
+                                  child: Icon(Icons.search),
+                                ),
+                                hintText: 'Search Product',
+                              ),
+                            ),
                           ),
-                          hintText: 'Search Product',
                         ),
-                      ),
+                        InkWell(
+                          onTap: () async {
+                            final Map<String, dynamic>? filters =
+                                await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const FilterScreen(),
+                              ),
+                            );
+
+                            if (filters == null) return;
+                            _filterProducts(filters);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            margin: const EdgeInsets.symmetric(horizontal: 8),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.secondary,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.filter_alt_outlined,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     Expanded(
                       child: GridView(

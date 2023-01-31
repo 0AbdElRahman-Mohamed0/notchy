@@ -27,4 +27,18 @@ class CartProvider extends ChangeNotifier {
     cart = tmp;
     notifyListeners();
   }
+
+  Future<void> updateProduct(int productId) async {
+    final product =
+        cart?.products?.firstWhere((product) => product.id == productId);
+    product?.quantity = product.quantity! + 1;
+    await _api.updateCart(cart!);
+    notifyListeners();
+  }
+
+  Future<void> getCart() async {
+    if (cart != null) return;
+    cart = await _api.getCart();
+    notifyListeners();
+  }
 }

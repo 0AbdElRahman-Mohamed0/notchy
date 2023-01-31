@@ -235,7 +235,7 @@ class ApiProvider {
 
   Future<CartModel> updateCart(CartModel cart, {int? cartId}) async {
     final response = await _dio.put(
-      '${Connection.baseURL}$_cartEndPoint/$cartId',
+      '${Connection.baseURL}$_cartEndPoint/${cartId ?? cart.id}',
       data: cart.toMap(),
       options: Options(
         headers: _apiHeaders,
@@ -257,6 +257,20 @@ class ApiProvider {
     );
     if (_validResponse(response.statusCode!)) {
       return ProductModel.fromMap(response.data);
+    } else {
+      throw response.data;
+    }
+  }
+
+  Future<CartModel> getCart() async {
+    final response = await _dio.get(
+      '${Connection.baseURL}$_cartEndPoint/5',
+      options: Options(
+        headers: _apiHeaders,
+      ),
+    );
+    if (_validResponse(response.statusCode!)) {
+      return CartModel.fromMap(response.data);
     } else {
       throw response.data;
     }

@@ -60,6 +60,30 @@ class _CartCardState extends State<CartCard> {
     }
   }
 
+  _updateProduct() async {
+    try {
+      LoadingScreen.show(context);
+      final product = context.read<ProductProvider>().product;
+      product.quantity = _quantity;
+      await context.read<CartProvider>().updateProduct(product.id ?? 0);
+      if (!mounted) return;
+      Navigator.pop(context);
+    } on DioError catch (e) {
+      Navigator.pop(context);
+      showDialog(
+        context: context,
+        builder: (_) => ErrorPopUp(message: e.readableError),
+      );
+    } catch (e) {
+      Navigator.pop(context);
+      showDialog(
+        context: context,
+        builder: (_) => const ErrorPopUp(
+            message: 'Something went wrong. Please try again.'),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final product = context.watch<ProductProvider>().product;
@@ -127,6 +151,7 @@ class _CartCardState extends State<CartCard> {
                             onTap: () {
                               _quantity++;
                               setState(() {});
+                              _updateProduct();
                             },
                             child: const Icon(
                               Icons.add_circle_outline,
@@ -154,6 +179,7 @@ class _CartCardState extends State<CartCard> {
                               if (_quantity == 1) return;
                               _quantity--;
                               setState(() {});
+                              _updateProduct();
                             },
                             child: const Icon(Icons.remove_circle_outline),
                           ),

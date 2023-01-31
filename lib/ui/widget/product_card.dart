@@ -1,10 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:notchy/providers/product_provider.dart';
+import 'package:notchy/providers/products_provider.dart';
 import 'package:notchy/ui/screens/edit_product_screen.dart';
 import 'package:notchy/ui/screens/product_details_screen.dart';
+import 'package:notchy/ui/widget/error_pop_up.dart';
 import 'package:notchy/ui/widget/loading.dart';
+import 'package:notchy/utils/extension_methods/dio_error_extention.dart';
 
 class ProductCard extends StatefulWidget {
   const ProductCard({Key? key, this.myProduct = false}) : super(key: key);
@@ -15,6 +19,39 @@ class ProductCard extends StatefulWidget {
 }
 
 class _ProductCardState extends State<ProductCard> {
+  _deleteProduct() async {
+    try {
+      LoadingScreen.show(context);
+      final productId = context.read<ProductProvider>().product.id;
+      await context.read<ProductsProvider>().deleteProduct(productId ?? 0);
+      if (!mounted) return;
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Your product deleted successfully.',
+            textAlign: TextAlign.center,
+          ),
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 3),
+        ),
+      );
+    } on DioError catch (e) {
+      Navigator.pop(context);
+      showDialog(
+        context: context,
+        builder: (_) => ErrorPopUp(message: e.readableError),
+      );
+    } catch (e) {
+      Navigator.pop(context);
+      showDialog(
+        context: context,
+        builder: (_) => const ErrorPopUp(
+            message: 'Something went wrong. Please try again.'),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final productProvider = context.watch<ProductProvider>();
@@ -48,24 +85,37 @@ class _ProductCardState extends State<ProductCard> {
             const SizedBox(
               height: 10,
             ),
-            CachedNetworkImage(
-              imageUrl: product.image ?? '',
-              height: 80,
-              width: double.infinity,
-              imageBuilder: (context, imageProvider) => Container(
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(5),
-                    topRight: Radius.circular(5),
+            Stack(
+              alignment: Alignment.topRight,
+              children: [
+                CachedNetworkImage(
+                  imageUrl: product.image ?? '',
+                  height: 80,
+                  width: double.infinity,
+                  imageBuilder: (context, imageProvider) => Container(
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(5),
+                        topRight: Radius.circular(5),
+                      ),
+                      image: DecorationImage(
+                        image: imageProvider,
+                      ),
+                    ),
                   ),
-                  image: DecorationImage(
-                    image: imageProvider,
-                  ),
+                  placeholder: (context, url) => const LoadingWidget(),
+                  errorWidget: (context, url, error) =>
+                      const Icon(Icons.error_outline),
                 ),
-              ),
-              placeholder: (context, url) => const LoadingWidget(),
-              errorWidget: (context, url, error) =>
-                  const Icon(Icons.error_outline),
+                if (widget.myProduct)
+                  IconButton(
+                    onPressed: _deleteProduct,
+                    icon: Icon(
+                      Icons.delete_forever_outlined,
+                      color: Theme.of(context).errorColor,
+                    ),
+                  ),
+              ],
             ),
             Expanded(
               child: Padding(

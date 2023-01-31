@@ -97,7 +97,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
         fileImage: _image,
         image: productModel.image,
       );
-      await context.read<ProductsProvider>().addProduct(product);
+      await context.read<ProductsProvider>().updateProduct(product);
       if (!mounted) return;
       Navigator.pop(context);
       Navigator.pop(context);

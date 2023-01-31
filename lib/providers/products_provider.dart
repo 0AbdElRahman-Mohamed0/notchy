@@ -36,6 +36,11 @@ class ProductsProvider extends ChangeNotifier {
     final product = await _api.updateProduct(productModel);
     myProducts.removeWhere((p) => p.id == productModel.id);
     myProducts.add(product);
+    final tmp = List.of(myProducts);
+    myProducts = [];
+    notifyListeners();
+    await Future.delayed(const Duration(microseconds: 500));
+    myProducts = List.of(tmp);
     notifyListeners();
   }
 

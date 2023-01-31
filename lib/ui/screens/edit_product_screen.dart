@@ -104,7 +104,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
-            'Your product added successfully.',
+            'Your product updated successfully.',
             textAlign: TextAlign.center,
           ),
           behavior: SnackBarBehavior.floating,

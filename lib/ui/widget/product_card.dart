@@ -6,7 +6,8 @@ import 'package:notchy/ui/screens/product_details_screen.dart';
 import 'package:notchy/ui/widget/loading.dart';
 
 class ProductCard extends StatefulWidget {
-  const ProductCard({Key? key}) : super(key: key);
+  const ProductCard({Key? key, this.myProduct = false}) : super(key: key);
+  final bool myProduct;
 
   @override
   State<ProductCard> createState() => _ProductCardState();
@@ -82,40 +83,59 @@ class _ProductCardState extends State<ProductCard> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          '${product.price ?? ''} EGP',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineSmall
-                              ?.copyWith(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
+                        Expanded(
+                          child: Text(
+                            '${product.price ?? ''} EGP',
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineSmall
+                                ?.copyWith(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                          ),
+                        ),
+                        if (product.rating?.rate != null)
+                          Row(
+                            children: [
+                              Text(
+                                '${product.rating?.rate ?? ''}',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headlineSmall
+                                    ?.copyWith(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                               ),
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              '${product.rating?.rate ?? ''}',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headlineSmall
-                                  ?.copyWith(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                            ),
-                            const SizedBox(
-                              width: 2,
-                            ),
-                            const Icon(
-                              Icons.star,
-                              color: Colors.amber,
-                              size: 18,
-                            ),
-                          ],
-                        ),
+                              const SizedBox(
+                                width: 2,
+                              ),
+                              const Icon(
+                                Icons.star,
+                                color: Colors.amber,
+                                size: 18,
+                              ),
+                            ],
+                          ),
                       ],
                     ),
+                    if (widget.myProduct) ...{
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            'Eidt product',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyLarge
+                                ?.copyWith(
+                                    fontSize: 16, fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      ),
+                    },
                   ],
                 ),
               ),

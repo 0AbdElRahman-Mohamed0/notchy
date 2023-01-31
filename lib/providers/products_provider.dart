@@ -6,6 +6,7 @@ export 'package:provider/provider.dart';
 
 class ProductsProvider extends ChangeNotifier {
   final _api = ApiProvider.instance;
+  List<ProductModel> myProducts = [];
   List<ProductModel>? products;
   List<ProductModel>? categoryProducts;
 
@@ -22,6 +23,12 @@ class ProductsProvider extends ChangeNotifier {
     notifyListeners();
     categoryProducts =
         await _api.getCategoryProducts(category, filters: filters);
+    notifyListeners();
+  }
+
+  Future<void> addProduct(ProductModel productModel) async {
+    final product = await _api.addProduct(productModel);
+    myProducts.add(product);
     notifyListeners();
   }
 }

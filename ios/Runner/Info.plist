@@ -12,6 +12,10 @@
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>NSCameraUsageDescription</key>
+    <string>This app needs access to Camera to update products pictures and upload pictures for your products</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>This app needs access to Pictures to update products pictures and upload pictures for your products</string>
 	<key>CFBundleName</key>
 	<string>notchy</string>
 	<key>CFBundlePackageType</key>

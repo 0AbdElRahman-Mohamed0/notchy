@@ -116,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     onTap: () async {
                       _filters = await Navigator.push(
                         context,
-                        MaterialPageRoute(
+                        CupertinoPageRoute(
                           builder: (_) => const FilterScreen(),
                         ),
                       );

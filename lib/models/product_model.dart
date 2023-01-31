@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:notchy/models/rating_model.dart';
 
 class ProductModel {
@@ -7,7 +9,15 @@ class ProductModel {
   String? category;
   String? description;
   String? image;
+  File? fileImage;
   RatingModel? rating;
+
+  ProductModel(
+      {this.fileImage,
+      this.title,
+      this.category,
+      this.description,
+      this.price});
 
   ProductModel.fromMap(Map<String, dynamic> json) {
     id = json['id'];
@@ -16,6 +26,18 @@ class ProductModel {
     category = json['category'];
     description = json['description'];
     image = json['image'];
-    rating = RatingModel.fromMap(json['rating']);
+    if (json['rating'] != null) {
+      rating = RatingModel.fromMap(json['rating']);
+    }
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'image': fileImage != null ? 'https://i.pravatar.cc' : null,
+      'title': title,
+      'category': category,
+      'description': description,
+      'price': price,
+    };
   }
 }

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:notchy/providers/product_provider.dart';
 import 'package:notchy/providers/products_provider.dart';
@@ -136,7 +137,7 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                           onTap: () async {
                             _filters = await Navigator.push(
                               context,
-                              MaterialPageRoute(
+                              CupertinoPageRoute(
                                 builder: (_) => const FilterScreen(),
                               ),
                             );

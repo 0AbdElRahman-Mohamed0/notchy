@@ -1,8 +1,13 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:notchy/providers/cart_provider.dart';
 import 'package:notchy/providers/navigation_index_provider.dart';
 import 'package:notchy/ui/screens/nav_screens/account_screen.dart';
 import 'package:notchy/ui/screens/nav_screens/cart_screen.dart';
 import 'package:notchy/ui/screens/nav_screens/home_screen.dart';
+import 'package:notchy/ui/widget/error_pop_up.dart';
+import 'package:notchy/ui/widget/loading.dart';
+import 'package:notchy/utils/extension_methods/dio_error_extention.dart';
 
 class NavScreen extends StatefulWidget {
   const NavScreen({Key? key}) : super(key: key);
@@ -24,6 +29,38 @@ class _NavScreenState extends State<NavScreen> {
     ];
   }
 
+  _clearCart() async {
+    try {
+      LoadingScreen.show(context);
+      await context.read<CartProvider>().deleteCart();
+      if (!mounted) return;
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Your cart deleted successfully.',
+            textAlign: TextAlign.center,
+          ),
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 3),
+        ),
+      );
+    } on DioError catch (e) {
+      Navigator.pop(context);
+      showDialog(
+        context: context,
+        builder: (_) => ErrorPopUp(message: e.readableError),
+      );
+    } catch (e) {
+      Navigator.pop(context);
+      showDialog(
+        context: context,
+        builder: (_) => const ErrorPopUp(
+            message: 'Something went wrong. Please try again.'),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final index = context.watch<NavigationIndexProvider>().index;
@@ -41,6 +78,17 @@ class _NavScreenState extends State<NavScreen> {
               .headlineMedium
               ?.copyWith(fontSize: 16, fontWeight: FontWeight.w500),
         ),
+        actions: index == 1
+            ? [
+                IconButton(
+                  onPressed: _clearCart,
+                  icon: Icon(
+                    Icons.delete,
+                    color: Theme.of(context).errorColor,
+                  ),
+                )
+              ]
+            : [],
       ),
       body: _widgetOptions.elementAt(index),
       bottomNavigationBar: BottomNavigationBar(

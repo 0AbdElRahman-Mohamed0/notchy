@@ -5,7 +5,6 @@ import 'package:notchy/providers/product_provider.dart';
 import 'package:notchy/ui/widget/cart_card.dart';
 import 'package:notchy/ui/widget/custom_button.dart';
 import 'package:notchy/ui/widget/error_pop_up.dart';
-import 'package:notchy/ui/widget/loading.dart';
 import 'package:notchy/utils/extension_methods/dio_error_extention.dart';
 
 class CartScreen extends StatefulWidget {
@@ -42,31 +41,31 @@ class _CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
     final cart = context.watch<CartProvider>().cart;
-    return cart == null
-        ? const LoadingWidget()
-        : cart.products?.isEmpty ?? true
-            ? Center(
-                child: Text(
-                  'No Products',
-                  style: Theme.of(context)
-                      .textTheme
-                      .headlineLarge
-                      ?.copyWith(fontSize: 16, fontWeight: FontWeight.w500),
-                ),
-              )
-            : LayoutBuilder(
-                builder: (context, constraints) => SingleChildScrollView(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                        minWidth: constraints.maxWidth,
-                        minHeight: constraints.maxHeight),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 14),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return cart?.products?.isEmpty ?? true
+        ? Center(
+            child: Text(
+              'No Products',
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineLarge
+                  ?.copyWith(fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+          )
+        : LayoutBuilder(
+            builder: (context, constraints) => SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                    minWidth: constraints.maxWidth,
+                    minHeight: constraints.maxHeight),
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
                         children: [
-                          ...cart.products!.map(
+                          ...cart!.products!.map(
                             (product) =>
                                 ChangeNotifierProvider<ProductProvider>(
                               create: (_) => ProductProvider(product),
@@ -80,15 +79,17 @@ class _CartScreenState extends State<CartScreen> {
                               ),
                             ),
                           ),
-                          CustomButton(
-                            onTap: () {},
-                            title: 'Checkout',
-                          ),
                         ],
                       ),
-                    ),
+                      CustomButton(
+                        onTap: () {},
+                        title: 'Checkout',
+                      ),
+                    ],
                   ),
                 ),
-              );
+              ),
+            ),
+          );
   }
 }

@@ -276,6 +276,19 @@ class ApiProvider {
     }
   }
 
+  Future<void> deleteCart(int cartId) async {
+    final response = await _dio.delete(
+      '${Connection.baseURL}$_cartEndPoint/$cartId',
+      options: Options(
+        headers: _apiHeaders,
+      ),
+    );
+    if (_validResponse(response.statusCode!)) {
+    } else {
+      throw response.data;
+    }
+  }
+
 ////////////////////////////////// UTILS ///////////////////////////////////////
   // Validating Request.
   bool _validResponse(int statusCode) => statusCode >= 200 && statusCode < 300;

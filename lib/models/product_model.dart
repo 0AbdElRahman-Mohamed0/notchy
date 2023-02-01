@@ -44,4 +44,10 @@ class ProductModel {
       'price': price,
     };
   }
+
+  @override
+  bool operator ==(Object other) => other is ProductModel && id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
 }

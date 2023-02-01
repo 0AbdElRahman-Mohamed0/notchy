@@ -13,7 +13,13 @@ class CartProvider extends ChangeNotifier {
       cart = await _api.addNewCart(cartModel);
     } else {
       final CartModel tmp = await _api.updateCart(cartModel, cartId: cart?.id);
-      cart?.products?.addAll(tmp.products ?? []);
+      if (cart!.products!.contains(cartModel.products!.first)) {
+        final product = cart?.products?.firstWhere(
+            (product) => product.id == cartModel.products?.first.id);
+        product?.quantity = product.quantity! + 1;
+      } else {
+        cart?.products?.addAll(tmp.products ?? []);
+      }
     }
     notifyListeners();
   }
@@ -39,6 +45,13 @@ class CartProvider extends ChangeNotifier {
   Future<void> getCart() async {
     if (cart != null) return;
     cart = await _api.getCart();
+    notifyListeners();
+  }
+
+  Future<void> deleteCart() async {
+    if (cart == null) return;
+    await _api.deleteCart(cart?.id ?? 0);
+    cart = null;
     notifyListeners();
   }
 }

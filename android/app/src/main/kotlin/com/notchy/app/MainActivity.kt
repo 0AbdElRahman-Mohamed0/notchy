@@ -1,4 +1,4 @@
-package com.example.notchy
+package com.notchy.app
 
 import io.flutter.embedding.android.FlutterActivity
 

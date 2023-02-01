@@ -50,6 +50,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       await context.read<AuthProvider>().updateProfile(user);
       if (!mounted) return;
       Navigator.pop(context);
+      Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(

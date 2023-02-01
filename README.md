@@ -8,6 +8,12 @@
 
 **Support Email**: [outlook](mailto:abdelrahman-mohamed98@outlook.com).
 
+### Runnig Code
+
+**Running code** -To run this code you first need to download **Flutter SDK** and **Android Studio** or **VS Code** and connect with a device or emulator and click on run button or just in terminal put this commands:
+**1- flutter pub get**
+**2- flutter run**
+
 #### Developer worked on this:
 
 **AbdElRahman** [Whatsapp](https://api.whatsapp.com/send?phone=0201225743656).

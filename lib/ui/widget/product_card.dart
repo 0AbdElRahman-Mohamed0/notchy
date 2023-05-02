@@ -179,7 +179,7 @@ class _ProductCardState extends State<ProductCard> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Text(
-                            'Eidt product',
+                            'Edit product',
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyLarge
